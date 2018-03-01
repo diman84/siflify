@@ -65,7 +65,7 @@ public class Listen
             System.out.println("File location: " + file);
         }
 
-        //sqs.deleteMessage(queueUrl, message.getReceiptHandle());
+        sqs.deleteMessage(queueUrl, message.getReceiptHandle());
 
         
       }
