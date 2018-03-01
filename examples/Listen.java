@@ -54,20 +54,20 @@ public class Listen
             }   
             
         JSONObject obj = new JSONObject(message.getBody());
-        JSONObject s3 = obj.getJSONArray("Records").getJSONObject(0).getJSONObject("s3");
+        if (obj.has("Records")) {
+            JSONObject s3 = obj.getJSONArray("Records").getJSONObject(0).getJSONObject("s3");
 
-        if (s3 != null) {
-            System.out.println("S3 details");
-            System.out.println("    Bucket:     " + s3.getJSONObject("bucket").getString("name"));
-            System.out.println("    Object: " + s3.getJSONObject("object").getString("key"));
+            if (s3 != null) {
+                System.out.println("S3 details");
+                System.out.println("    Bucket:     " + s3.getJSONObject("bucket").getString("name"));
+                System.out.println("    Object: " + s3.getJSONObject("object").getString("key"));
 
-            file = getFile(s3.getJSONObject("bucket").getString("name"), s3.getJSONObject("object").getString("key")); 
-            System.out.println("File location: " + file);
+                file = getFile(s3.getJSONObject("bucket").getString("name"), s3.getJSONObject("object").getString("key")); 
+                System.out.println("File location: " + file);
+            }
         }
 
         sqs.deleteMessage(queueUrl, message.getReceiptHandle());
-
-        
       }
 
       if (!file.isEmpty()) {
