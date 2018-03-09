@@ -34,6 +34,7 @@ public class Listen
     AmazonSQS sqs = AmazonSQSClientBuilder.standard()
                                 .withRegion(Regions.US_EAST_2)
                                 .build();
+
       String file = "";
       String queueUrl = "https://sqs.us-east-2.amazonaws.com/638479812646/siflify";
       
@@ -70,6 +71,10 @@ public class Listen
         sqs.deleteMessage(queueUrl, message.getReceiptHandle());
       }
 
+      if (file.isEmpty() && args.length > 0) {
+          file = args[0];
+      }
+
       if (!file.isEmpty()) {
         Scip scip = new Scip();
         
@@ -92,24 +97,40 @@ public class Listen
         Solution sol = scip.getBestSol();
         if( sol != null )
         {
-            writeFile("objective value: " + scip.getSolOrigObj(sol), file.substring(0, file.indexOf('.')));
+            try {
+            Variable[] vars = scip.getVars();
+            double solObj = scip.getSolOrigObj(sol);
+            String fileName  = file.substring(0, file.indexOf('.')) + ".sol";
+
+            FileWriter fw = new FileWriter(fileName);
+            fw.write("objective value: " + solObj);
+            for (int i = 0; i < vars.length; i++) {
+                fw.write("\nvariable " + vars[i].getName() + ": " + vars[i].getObj());
+            }
+        
+            fw.close();
+
+
+            writeFile(fileName);
+
+            }
+            catch (IOException e){
+                System.err.println(e.getMessage());
+                System.exit(1);
+            }
+            catch (AmazonServiceException e) {
+                System.err.println(e.getErrorMessage());
+                System.exit(1);
+            }
         }
-
-       
-
-
         // free SCIP
         scip.free();
       }
     }
 
-    private static void writeFile(String sol, String path) {
-        path = path + ".sol";
+    private static void writeFile(String path) {
         try {
-            File file = new File(path); 
-            file.createNewFile();
-            List<String> contents = Arrays.asList("solution: ", sol);
-            Files.write(file.toPath(), contents);                       
+            File file = new File(path);                  
             file.deleteOnExit();
 
             final AmazonS3 s3 = AmazonS3ClientBuilder.standard()
@@ -117,14 +138,6 @@ public class Listen
                                         .build();
             s3.putObject(new PutObjectRequest(
                 "scipsolutions", file.getName(), file));
-        }
-        catch (FileNotFoundException e){
-            System.err.println(e.getMessage());
-            System.exit(1);
-        }
-        catch (IOException e){
-            System.err.println(e.getMessage());
-            System.exit(1);
         }
         catch (AmazonServiceException e) {
             System.err.println(e.getErrorMessage());
