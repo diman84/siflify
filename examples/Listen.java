@@ -2,6 +2,7 @@ import jscip.*;
 import java.util.List;
 import java.util.Arrays;
 import java.util.Map.Entry;
+import java.lang.Object;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
@@ -24,6 +25,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import java.io.*;
 import java.nio.file.*;
+import org.apache.commons.lang3.*;
 import org.json.*;
 
 public class Listen
@@ -73,6 +75,7 @@ public class Listen
 
       if (file.isEmpty() && args.length > 0) {
           file = args[0];
+          System.out.println("read from command line: " + file);
       }
 
       if (!file.isEmpty()) {
@@ -92,20 +95,31 @@ public class Listen
 
         // print statistics and the best found solution (only non-zeros)
         //scip.printStatistics();
-        //scip.printBestSol(false);
+        //scip.printBestSol(false);       
 
         Solution sol = scip.getBestSol();
         if( sol != null )
         {
-            try {
+            try { 
+                
+                //scip.writeBestSol("solution2.sol",false);
+
             Variable[] vars = scip.getVars();
-            double solObj = scip.getSolOrigObj(sol);
-            String fileName  = file.substring(0, file.indexOf('.')) + ".sol";
+            Double solObj = scip.getSolOrigObj(sol);
+            //String fileName  = file.substring(0, file.indexOf('.')) + ".sol";
+            String fileName  = (new File(file)).getName();
+            fileName = fileName.substring(0, fileName.indexOf('.')) + ".sol";
+            
 
             FileWriter fw = new FileWriter(fileName);
-            fw.write("objective value: " + solObj);
+            String objTitle = "objective value:";
+            writeCol1(fw, objTitle, solObj.toString());
+
             for (int i = 0; i < vars.length; i++) {
-                fw.write("\nvariable " + vars[i].getName() + ": " + vars[i].getObj());
+                fw.write("\n");
+                writeCol1(fw, vars[i].getName(), ((Double)scip.getSolVal(sol, vars[i])).toString());
+                fw.write(" \t(obj:" + vars[i].getObj() + ")");
+                //fw.write("\nvariable " + vars[i].getName() + ": " + vars[i].getObj());
             }
         
             fw.close();
@@ -128,6 +142,12 @@ public class Listen
       }
     }
 
+    static final int COL1 = 53;
+
+    private static void writeCol1(FileWriter fw, String key, String val) throws IOException {
+        fw.write(key + StringUtils.leftPad(val, COL1 - key.length()));
+    }
+
     private static void writeFile(String path) {
         try {
             File file = new File(path);                  
@@ -136,6 +156,7 @@ public class Listen
             final AmazonS3 s3 = AmazonS3ClientBuilder.standard()
                                         .withRegion(Regions.US_EAST_2)
                                         .build();
+            System.out.println("Writing file to S3: " + file.getName());
             s3.putObject(new PutObjectRequest(
                 "scipsolutions", file.getName(), file));
         }

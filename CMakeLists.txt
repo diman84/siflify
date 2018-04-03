@@ -96,6 +96,6 @@ FILE (GLOB example_sources ${PROJECT_SOURCE_DIR}/examples/*.java)
 
 add_jar (examples
         SOURCES ${example_sources}
-        INCLUDE_JARS scipjar ${PROJECT_SOURCE_DIR}/libs/aws-java-sdk-1.11.285.jar ${PROJECT_SOURCE_DIR}/libs/json.jar
+        INCLUDE_JARS scipjar ${PROJECT_SOURCE_DIR}/libs/commons-lang3-3.7.jar ${PROJECT_SOURCE_DIR}/libs/aws-java-sdk-1.11.285.jar ${PROJECT_SOURCE_DIR}/libs/json.jar
         OUTPUT_DIR ${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE}
         )
