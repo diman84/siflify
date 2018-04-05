@@ -95,14 +95,14 @@ public class Listen
 
         // print statistics and the best found solution (only non-zeros)
         //scip.printStatistics();
-        //scip.printBestSol(false);       
-
+        //scip.printBestSol(false);           
+        
         Solution sol = scip.getBestSol();
         if( sol != null )
         {
             try { 
                 
-                //scip.writeBestSol("solution2.sol",false);
+                //scip.writeBestSol("/Users/admin/tmp/best_sol.sol", false);   
 
             Variable[] vars = scip.getVars();
             Double solObj = scip.getSolOrigObj(sol);
@@ -110,27 +110,24 @@ public class Listen
             String fileName  = (new File(file)).getName();
             fileName = fileName.substring(0, fileName.indexOf('.')) + ".sol";
             
+            scip.writeBestSol(fileName, false);   
 
-            FileWriter fw = new FileWriter(fileName);
-            String objTitle = "objective value:";
-            writeCol1(fw, objTitle, solObj.toString());
+            // FileWriter fw = new FileWriter(fileName);
+            // String objTitle = "objective value:";
+            // writeCol1(fw, objTitle, solObj.toString());
 
-            for (int i = 0; i < vars.length; i++) {
-                fw.write("\n");
-                writeCol1(fw, vars[i].getName(), ((Double)scip.getSolVal(sol, vars[i])).toString());
-                fw.write(" \t(obj:" + vars[i].getObj() + ")");
-                //fw.write("\nvariable " + vars[i].getName() + ": " + vars[i].getObj());
-            }
+            // for (int i = 0; i < vars.length; i++) {
+            //     fw.write("\n");
+            //     writeCol1(fw, vars[i].getName(), ((Double)scip.getSolVal(sol, vars[i])).toString());
+            //     fw.write(" \t(obj:" + vars[i].getObj() + ")");
+            //     //fw.write("\nvariable " + vars[i].getName() + ": " + vars[i].getObj());
+            // }
         
-            fw.close();
+            // fw.close();
 
 
             writeFile(fileName);
 
-            }
-            catch (IOException e){
-                System.err.println(e.getMessage());
-                System.exit(1);
             }
             catch (AmazonServiceException e) {
                 System.err.println(e.getErrorMessage());

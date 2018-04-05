@@ -282,4 +282,11 @@ public class SCIPJNI {
     SCIPJNIJNI.releaseCons(SWIGTYPE_p_SCIP.getCPtr(scip), SWIGTYPE_p_SCIP_CONS.getCPtr(cons));
   }
 
+  public static SWIGTYPE_p_FILE openFile(String file) {
+    return new SWIGTYPE_p_FILE(SCIPJNIJNI.openFile(file), false);
+  }
+
+  public static int closeFile(SWIGTYPE_p_FILE file) {
+    return SCIPJNIJNI.closeFile(file.getCPtr(file));
+  }
 }

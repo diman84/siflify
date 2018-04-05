@@ -3,6 +3,14 @@
 %{
    #include "scip/scip.h"
    #include "scip/scipdefplugins.h"
+   #include "stdio.h"
+
+   FILE* openFile(const char* filename, const char* mode){
+     return fopen(filename, mode);
+   }
+   int closeFile(FILE *) {
+     return fclose(file);
+   }
 
    /* assist function to create a SCIP */
    SCIP* createSCIP()

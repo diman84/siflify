@@ -208,6 +208,14 @@ static void SWIGUNUSED SWIG_JavaThrowException(JNIEnv *jenv, SWIG_JavaExceptionC
 
    #include "scip/scip.h"
    #include "scip/scipdefplugins.h"
+   #include "stdio.h"
+
+  FILE* openFile(const char* filename){
+    return fopen(filename, "w");
+  }
+  int closeFile(FILE* file) {
+    return fclose(file);
+  }
 
    /* assist function to create a SCIP */
    SCIP* createSCIP()
@@ -1183,7 +1191,7 @@ SWIGEXPORT jint JNICALL Java_jscip_SCIPJNIJNI_SCIPprintBestSol(JNIEnv *jenv, jcl
   (void)jcls;
   arg1 = *(SCIP **)&jarg1; 
   arg2 = *(FILE **)&jarg2; 
-  arg3 = (unsigned int)jarg3; 
+  arg3 = (unsigned int)jarg3;   
   result = (SCIP_RETCODE)SCIPprintBestSol(arg1,arg2,arg3);
   jresult = (jint)result; 
   return jresult;
@@ -1669,6 +1677,35 @@ SWIGEXPORT jstring JNICALL Java_jscip_SCIPJNIJNI_SCIPconsGetName(JNIEnv *jenv, j
   return jresult;
 }
 
+SWIGEXPORT jlong JNICALL Java_jscip_SCIPJNIJNI_openFile(JNIEnv *jenv, jclass jcls, jstring jarg1) {
+  jlong jresult = 0 ;
+  char *arg1 = (char *) 0 ;
+  FILE *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = 0;
+  if (jarg1) {
+    arg1 = (char *)(*jenv)->GetStringUTFChars(jenv, jarg1, 0);
+    if (!arg1) return 0;
+  }
+  result = (FILE *)openFile((char const *)arg1);
+  *(FILE **)&jresult = result; 
+  return jresult;
+}
+
+SWIGEXPORT jint JNICALL Java_jscip_SCIPJNIJNI_closeFile(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  jlong jresult = 0 ;
+  FILE *arg1 = (FILE *) 0 ;
+  int result;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(FILE **)&jarg1; 
+  result = (int)closeFile(arg1);
+  jresult = (jint)result; 
+  return jresult;
+}
 
 SWIGEXPORT jlong JNICALL Java_jscip_SCIPJNIJNI_createSCIP(JNIEnv *jenv, jclass jcls) {
   jlong jresult = 0 ;

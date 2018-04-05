@@ -109,4 +109,6 @@ public class SCIPJNIJNI {
   public final static native long createConsBasicQuadratic(long jarg1, String jarg2, int jarg3, long jarg4, long jarg5, int jarg6, long jarg7, long jarg8, long jarg9, double jarg10, double jarg11);
   public final static native long createConsBasicSuperIndicator(long jarg1, String jarg2, long jarg3, long jarg4);
   public final static native void releaseCons(long jarg1, long jarg2);
+  public final static native long openFile(String file);
+  public final static native int closeFile(long file);
 }

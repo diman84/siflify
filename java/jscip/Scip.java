@@ -124,12 +124,26 @@ public class Scip
    }
 
    /** wraps SCIPprintBestSol() */
+   public void writeBestSol(String fileName, boolean printzeros)
+   {      
+      SWIGTYPE_p_FILE file = SCIPJNI.openFile(fileName);
+      try {
+            if( printzeros )
+            CHECK_RETCODE( SCIPJNI.SCIPprintBestSol(_scipptr, file, 1) );
+            else
+            CHECK_RETCODE( SCIPJNI.SCIPprintBestSol(_scipptr, file, 0) );
+      }
+      finally {
+           SCIPJNI.closeFile(file);
+      }
+   }
+
    public void printBestSol(boolean printzeros)
    {
       if( printzeros )
-         CHECK_RETCODE( SCIPJNI.SCIPprintBestSol(_scipptr, null, 1) );
+            CHECK_RETCODE( SCIPJNI.SCIPprintBestSol(_scipptr, null, 1) );
       else
-         CHECK_RETCODE( SCIPJNI.SCIPprintBestSol(_scipptr, null, 0) );
+            CHECK_RETCODE( SCIPJNI.SCIPprintBestSol(_scipptr, null, 0) );   
    }
 
    /** wraps SCIPaddVar() */
