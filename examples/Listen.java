@@ -98,14 +98,14 @@ public class Listen
         //scip.printBestSol(false);           
         
         Solution sol = scip.getBestSol();
-        if( sol != null )
-        {
+        //if( sol != null )
+        //{
             try { 
                 
                 //scip.writeBestSol("/Users/admin/tmp/best_sol.sol", false);   
 
-            Variable[] vars = scip.getVars();
-            Double solObj = scip.getSolOrigObj(sol);
+            //Variable[] vars = scip.getVars();
+            //Double solObj = scip.getSolOrigObj(sol);
             //String fileName  = file.substring(0, file.indexOf('.')) + ".sol";
             String fileName  = (new File(file)).getName();
             fileName = fileName.substring(0, fileName.indexOf('.')) + ".sol";
@@ -133,7 +133,7 @@ public class Listen
                 System.err.println(e.getErrorMessage());
                 System.exit(1);
             }
-        }
+        //}
         // free SCIP
         scip.free();
       }
